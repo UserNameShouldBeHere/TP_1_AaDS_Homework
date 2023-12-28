@@ -216,59 +216,19 @@ int main() {
     char command;
     std::string value;
 
-    std::ifstream in_file("input_6.txt");
-    std::vector<std::pair<char, std::string>> input;
-    std::string line;
-    if (in_file.is_open()) {
-        while (std::getline(in_file, line)) {
-            input.push_back(std::pair<char, std::string>(line[0], line.substr(2)));
+    while (std::cin >> command >> value) {
+        switch (command) {
+        case '+':
+            std::cout << (hash_table->insert(value) ? "OK" : "FAIL") << std::endl;
+            break;
+        case '-':
+            std::cout << (hash_table->erase(value) ? "OK" : "FAIL") << std::endl;
+            break;
+        case '?':
+            std::cout << (hash_table->find(value) ? "OK" : "FAIL") << std::endl;
+            break;
         }
-        in_file.close();
     }
-
-    int i = 0;
-    std::ifstream res_file("result_6.txt");
-    std::string result;
-    if (res_file.is_open()) {
-        while (std::getline(res_file, line)) {
-            command = input[i].first;
-            value = input[i].second;
-            switch (command) {
-            case '+':
-                result = (hash_table->insert(value) ? "OK" : "FAIL");
-                break;
-            case '-':
-                result = (hash_table->erase(value) ? "OK" : "FAIL");
-                break;
-            case '?':
-                result = (hash_table->find(value) ? "OK" : "FAIL");
-                break;
-            }
-
-            if (result != line) {
-                std::cout << "Error in line: " << i + 1 << std::endl;
-                break;
-            }
-
-            i++;
-        }
-        res_file.close();
-    }
-    std::cout << "Done!" << std::endl;
-
-    //while (std::cin >> command >> value) {
-    //    switch (command) {
-    //    case '+':
-    //        std::cout << (hash_table->insert(value) ? "OK" : "FAIL") << std::endl;
-    //        break;
-    //    case '-':
-    //        std::cout << (hash_table->erase(value) ? "OK" : "FAIL") << std::endl;
-    //        break;
-    //    case '?':
-    //        std::cout << (hash_table->find(value) ? "OK" : "FAIL") << std::endl;
-    //        break;
-    //    }
-    //}
 
     delete hash_table;
 
