@@ -72,10 +72,11 @@ public:
         if (items_count >= BUCKETS_SIZES_LIST[buckets_sizes_list_idx] * LOAD_FACTOR)
             rehash();
 
-        std::set<size_t> visited_idxs;
+        size_t first_deleted_idx;
         size_t current_idx;
         size_t hash_count = 1;
         current_idx = hasher(key) % BUCKETS_SIZES_LIST[buckets_sizes_list_idx];
+        first_deleted_idx = current_idx;
 
         if (array[current_idx].empty) {
             array[current_idx].key = key;
@@ -85,13 +86,12 @@ public:
             return true;
         }
 
-        while (true) {
-            visited_idxs.insert(current_idx);
-
+        for (int i = 0; i < BUCKETS_SIZES_LIST[buckets_sizes_list_idx]; i++) {
             current_idx = double_hash(key, hash_count++) % BUCKETS_SIZES_LIST[buckets_sizes_list_idx];
 
-            if (visited_idxs.find(current_idx) != visited_idxs.end())
+            if (current_idx == first_deleted_idx) {
                 rehash();
+            }
             else if (array[current_idx].empty) {
                 array[current_idx].key = key;
                 array[current_idx].empty = false;
@@ -103,10 +103,11 @@ public:
     }
 
     bool erase(const Key& key) {
-        std::set<size_t> visited_idxs;
+        size_t first_deleted_idx;
         size_t current_idx;
         size_t hash_count = 1;
         current_idx = hasher(key) % BUCKETS_SIZES_LIST[buckets_sizes_list_idx];
+        first_deleted_idx = current_idx;
 
         if (array[current_idx].empty && !array[current_idx].had_prev_value)
             return false;
@@ -119,12 +120,10 @@ public:
             return true;
         }
 
-        while (true) {
-            visited_idxs.insert(current_idx);
-
+        for (int i = 0; i < BUCKETS_SIZES_LIST[buckets_sizes_list_idx]; i++) {
             current_idx = double_hash(key, hash_count++) % BUCKETS_SIZES_LIST[buckets_sizes_list_idx];
 
-            if (visited_idxs.find(current_idx) != visited_idxs.end())
+            if (current_idx == first_deleted_idx)
                 return false;
             else if (array[current_idx].empty && !array[current_idx].had_prev_value)
                 return false;
@@ -140,10 +139,11 @@ public:
     }
 
     bool find(const Key& key) {
-        std::set<size_t> visited_idxs;
+        size_t first_deleted_idx;
         size_t current_idx;
         size_t hash_count = 1;
         current_idx = hasher(key) % BUCKETS_SIZES_LIST[buckets_sizes_list_idx];
+        first_deleted_idx = current_idx;
 
         if (array[current_idx].empty && !array[current_idx].had_prev_value)
             return false;
@@ -151,12 +151,10 @@ public:
         if (!array[current_idx].empty && array[current_idx].key == key)
             return true;
 
-        while (true) {
-            visited_idxs.insert(current_idx);
-
+        for (int i = 0; i < BUCKETS_SIZES_LIST[buckets_sizes_list_idx]; i++) {
             current_idx = double_hash(key, hash_count++) % BUCKETS_SIZES_LIST[buckets_sizes_list_idx];
 
-            if (visited_idxs.find(current_idx) != visited_idxs.end())
+            if (current_idx == first_deleted_idx)
                 return false;
             else if (array[current_idx].empty && !array[current_idx].had_prev_value)
                 return false;
@@ -218,19 +216,59 @@ int main() {
     char command;
     std::string value;
 
-    while (std::cin >> command >> value) {
-        switch (command) {
-        case '+':
-            std::cout << (hash_table->insert(value) ? "OK" : "FAIL") << std::endl;
-            break;
-        case '-':
-            std::cout << (hash_table->erase(value) ? "OK" : "FAIL") << std::endl;
-            break;
-        case '?':
-            std::cout << (hash_table->find(value) ? "OK" : "FAIL") << std::endl;
-            break;
+    std::ifstream in_file("input_6.txt");
+    std::vector<std::pair<char, std::string>> input;
+    std::string line;
+    if (in_file.is_open()) {
+        while (std::getline(in_file, line)) {
+            input.push_back(std::pair<char, std::string>(line[0], line.substr(2)));
         }
+        in_file.close();
     }
+
+    int i = 0;
+    std::ifstream res_file("result_6.txt");
+    std::string result;
+    if (res_file.is_open()) {
+        while (std::getline(res_file, line)) {
+            command = input[i].first;
+            value = input[i].second;
+            switch (command) {
+            case '+':
+                result = (hash_table->insert(value) ? "OK" : "FAIL");
+                break;
+            case '-':
+                result = (hash_table->erase(value) ? "OK" : "FAIL");
+                break;
+            case '?':
+                result = (hash_table->find(value) ? "OK" : "FAIL");
+                break;
+            }
+
+            if (result != line) {
+                std::cout << "Error in line: " << i + 1 << std::endl;
+                break;
+            }
+
+            i++;
+        }
+        res_file.close();
+    }
+    std::cout << "Done!" << std::endl;
+
+    //while (std::cin >> command >> value) {
+    //    switch (command) {
+    //    case '+':
+    //        std::cout << (hash_table->insert(value) ? "OK" : "FAIL") << std::endl;
+    //        break;
+    //    case '-':
+    //        std::cout << (hash_table->erase(value) ? "OK" : "FAIL") << std::endl;
+    //        break;
+    //    case '?':
+    //        std::cout << (hash_table->find(value) ? "OK" : "FAIL") << std::endl;
+    //        break;
+    //    }
+    //}
 
     delete hash_table;
 
