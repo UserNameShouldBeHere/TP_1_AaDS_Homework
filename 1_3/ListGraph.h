@@ -14,13 +14,14 @@ public:
 	~Vertex();
 };
 
-class ListGraph : IGraph {
+class ListGraph : public IGraph {
 private:
 	std::vector<Vertex*>* verticies;
 
 public:
 	ListGraph(size_t verticies_count);
-	ListGraph(const ListGraph& graph);
+	ListGraph(const ListGraph& graph) = delete;
+	ListGraph(const IGraph& graph);
 
 	// Добавление ребра от from к to.
 	virtual void AddEdge(int from, int to) override;

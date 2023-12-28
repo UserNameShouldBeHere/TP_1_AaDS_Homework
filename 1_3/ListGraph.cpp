@@ -1,4 +1,5 @@
 #include "ListGraph.h"
+#include <iostream>
 
 Vertex::Vertex(int value) : value(value), next(nullptr) {}
 
@@ -6,15 +7,15 @@ Vertex::~Vertex() { delete next; }
 
 ListGraph::ListGraph(size_t verticies_count) { verticies = new std::vector<Vertex*>(verticies_count); }
 
-ListGraph::ListGraph(const ListGraph& graph)
+ListGraph::ListGraph(const IGraph& graph)
 {
     verticies = new std::vector<Vertex*>(graph.VerticesCount());
     Vertex* current;
 
     for (int i = 0; i < graph.VerticesCount(); i++) {
-        (*verticies)[i] = new Vertex((*graph.verticies)[i]->value);
-        current = (*verticies)[i];
         std::vector<int> next_verticies = graph.GetNextVertices(i);
+        (*verticies)[i] = new Vertex(next_verticies[0]);
+        current = (*verticies)[i];
         for (int j = 1; j < next_verticies.size(); j++) {
             current->next = new Vertex(next_verticies[j]);
             current = current->next;
