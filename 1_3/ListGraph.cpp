@@ -1,5 +1,4 @@
 #include "ListGraph.h"
-#include <iostream>
 
 Vertex::Vertex(int value) : value(value), next(nullptr) {}
 

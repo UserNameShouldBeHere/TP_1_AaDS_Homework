@@ -1,6 +1,8 @@
 #include <iostream>
 #include "ListGraph.h"
 #include "MatrixGraph.h"
+#include "ArcGraph.h"
+#include "SetGraph.h"
 
 int main() {
     // ListGraph
@@ -73,12 +75,67 @@ int main() {
 
     delete matrix_graph;
 
-    //
+    // ArcGraph
+    ArcGraph* arc_graph = new ArcGraph((IGraph&)(*list_graph));
+    flag = true;
+    for (int i = 0; i < 3; i++) {
+        std::vector<int> next_vertecies = list_graph->GetNextVertices(i);
+        std::vector<int> new_next_vertecies = arc_graph->GetNextVertices(i);
+        std::vector<int> prev_vertecies = list_graph->GetPrevVertices(i);
+        std::vector<int> new_prev_vertecies = arc_graph->GetPrevVertices(i);
+        for (int vertex : next_vertecies) {
+            if (std::find(new_next_vertecies.begin(), new_next_vertecies.end(), vertex) == new_next_vertecies.end()) {
+                flag = false;
+                std::cout << "Error" << std::endl;
+                break;
+            }
+        }
+        for (int vertex : prev_vertecies) {
+            if (std::find(new_prev_vertecies.begin(), new_prev_vertecies.end(), vertex) == new_prev_vertecies.end()) {
+                flag = false;
+                std::cout << "Error" << std::endl;
+                break;
+            }
+        }
+        if (!flag)
+            break;
+    }
 
+    if (flag)
+        std::cout << "Arc graph done!" << std::endl;
 
-    //for (int vertex : matrix_graph->GetNextVertices(2))
-    //    std::cout << vertex << ' ';
-    //std::cout << std::endl;
+    delete arc_graph;
+
+    // SetGraph
+    SetGraph* set_graph = new SetGraph((IGraph&)(*list_graph));
+    flag = true;
+    for (int i = 0; i < 3; i++) {
+        std::vector<int> next_vertecies = list_graph->GetNextVertices(i);
+        std::vector<int> new_next_vertecies = set_graph->GetNextVertices(i);
+        std::vector<int> prev_vertecies = list_graph->GetPrevVertices(i);
+        std::vector<int> new_prev_vertecies = set_graph->GetPrevVertices(i);
+        for (int vertex : next_vertecies) {
+            if (std::find(new_next_vertecies.begin(), new_next_vertecies.end(), vertex) == new_next_vertecies.end()) {
+                flag = false;
+                std::cout << "Error" << std::endl;
+                break;
+            }
+        }
+        for (int vertex : prev_vertecies) {
+            if (std::find(new_prev_vertecies.begin(), new_prev_vertecies.end(), vertex) == new_prev_vertecies.end()) {
+                flag = false;
+                std::cout << "Error" << std::endl;
+                break;
+            }
+        }
+        if (!flag)
+            break;
+    }
+
+    if (flag)
+        std::cout << "Set graph done!" << std::endl;
+
+    delete set_graph;
 
     delete list_graph;
 
