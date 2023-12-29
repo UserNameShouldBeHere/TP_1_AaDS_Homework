@@ -55,16 +55,16 @@ public:
 		dist[from] = 0;
 
 		while (!queue.empty()) {
-			int u = queue.top().second;
+			int current = queue.top().second;
 			queue.pop();
 
-			for (Vertex vertex : GetNextVertices(u)) {
-				int v = vertex.Value();
+			for (Vertex vertex : GetNextVertices(current)) {
+				int value = vertex.Value();
 				int weight = vertex.Weight();
 
-				if (dist[v] > dist[u] + weight) {
-					dist[v] = dist[u] + weight;
-					queue.push(std::pair<int, int>(dist[v], v));
+				if (dist[value] > dist[current] + weight) {
+					dist[value] = dist[current] + weight;
+					queue.push(std::pair<int, int>(dist[value], value));
 				}
 			}
 		}
